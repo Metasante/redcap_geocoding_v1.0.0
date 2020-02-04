@@ -1,4 +1,4 @@
-# REDCap JavaScript Injector
+# REDCap geocoding
 
 A REDCap External Module that allows geocoding for swiss addresses.
 
