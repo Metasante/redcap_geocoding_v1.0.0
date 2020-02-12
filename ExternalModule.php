@@ -17,7 +17,7 @@ class ExternalModule extends AbstractExternalModule {
     }
 
     /**
-     * Inject JS code.
+     * Load OpenLayers.
      *
      * @param string $type
      *   Accepted types: 'data_entry' or 'survey'.
@@ -28,8 +28,51 @@ class ExternalModule extends AbstractExternalModule {
         // $settings = $this->getFormattedSettings(PROJECT_ID);
 
         echo '  <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.1.1/build/ol.js"></script>
+                <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList"></script>
+                <script src="http://api3.geo.admin.ch/loader.js?lang=en&version=4.4.2"  type="text/javascript"></script>';
+
+    }
+
+
+    /**
+     * Fill with swiss coordinates and egid
+     *
+     * @param string $type
+     *   Accepted types: 'data_entry' or 'survey'.
+     * @param string $instrument
+     *   The instrument name.
+     */
+    function fillCoordinatesEgid($type, $instrument) {
+        // $settings = $this->getFormattedSettings(PROJECT_ID);
+
+        echo '  <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.1.1/build/ol.js"></script>
                 <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList"></script>';
     }
+
+
+    /**
+     * Open map
+     *
+     * @param string $type
+     *   Accepted types: 'data_entry' or 'survey'.
+     * @param string $instrument
+     *   The instrument name.
+     */
+    function getCoordinates($type, $instrument) {
+        // $settings = $this->getFormattedSettings(PROJECT_ID);
+
+        echo '  <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.1.1/build/ol.js"></script>
+                <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList"></script>';
+    }
+
+
+
+
+
+
+
+
+
 
 
     // /**
