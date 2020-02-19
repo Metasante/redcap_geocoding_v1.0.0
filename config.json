@@ -4,7 +4,8 @@
     "description": "Allow the use of geo libraries (open layers)",
     "permissions": [
         "redcap_data_entry_form_top",
-        "redcap_survey_page_top"
+        "redcap_survey_page_top",
+        "redcap_survey_complete"
     ],
     "authors": [
         {

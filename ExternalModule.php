@@ -10,13 +10,36 @@ class ExternalModule extends AbstractExternalModule {
 
     function redcap_data_entry_form_top($project_id, $record = null, $instrument, $event_id, $group_id = null, $repeat_instance = 1) {
         $this->loadOpenLayers('data_entry', $instrument);
+
+
     }
 
     function redcap_survey_page_top($project_id, $record = null, $instrument, $event_id, $group_id = null, $survey_hash, $response_id = null, $repeat_instance = 1) {
         $this->loadOpenLayers('survey', $instrument);
+
+
+
+
+
     }
 
-    /**
+
+    function redcap_survey_complete($project_id, $record = null, $instrument, $event_id, $survey_hash,  $group_id = null, $response_id, $repeat_instance = 1){
+
+
+
+        $this->validateAddress('survey',$instrument);
+
+
+        $this->fillCoordinatesEgid('survey',$instrument);
+
+
+
+
+    }
+
+
+  /*
      * Load OpenLayers.
      *
      * @param string $type
@@ -43,11 +66,28 @@ class ExternalModule extends AbstractExternalModule {
      *   The instrument name.
      */
     function fillCoordinatesEgid($type, $instrument) {
-        // $settings = $this->getFormattedSettings(PROJECT_ID);
 
-        echo '  <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.1.1/build/ol.js"></script>
-                <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList"></script>';
+        //Get data from Address form
+
+
+        //Validate data
+        $is_valid = true;
+
+        //Call API depending on data
+        $service_url = 'https://lasigvm2.epfl.ch/api/complete_addresse/?plz4=1004';
+        $data = callAPI($service_url);
+
+         if($is_valid){
+          //Insert gkode, gkodn, egid
+
+        } else {
+          //Open map survey
+        }
+
+
+
     }
+
 
 
     /**
@@ -58,22 +98,49 @@ class ExternalModule extends AbstractExternalModule {
      * @param string $instrument
      *   The instrument name.
      */
-    function getCoordinates($type, $instrument) {
+    function validateAddress($type, $instrument) {
         // $settings = $this->getFormattedSettings(PROJECT_ID);
 
-        echo '  <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.1.1/build/ol.js"></script>
-                <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList"></script>';
+
     }
 
 
 
+    /**
+     * Call API
+     *
+     * @param string $method
+     *   Accepted types: "GET", "POST", "PUT"
+     * @param string $url
+     *   The REST API URL
+     */
 
 
 
 
 
+function callAPI($url){
+
+  // Get cURL resource
+  $curl = curl_init();
+  // Set some options - we are passing in a useragent too here
+  curl_setopt_array($curl, [
+        CURLOPT_RETURNTRANSFER => 1,
+        CURLOPT_URL => $url,
+        CURLOPT_USERAGENT => 'Codular Sample cURL Request'
+      ]);
+      // Send the request & save response to $resp
+  $resp = curl_exec($curl);
+      // Close request to clear up some resources
+  curl_close($curl);
+
+  return $resp;
 
 
+
+
+
+}
 
     // /**
     //  * Formats settings into a hierarchical key-value pair array.
