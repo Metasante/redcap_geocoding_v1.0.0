@@ -1,0 +1,27 @@
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css" integrity="sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ==" crossorigin="" />
+  <title>Cliquez sur votre logement.</title>
+</head>
+
+<body>
+  <div class="yellow">Oups ! Nous ne connaissons pas votre adresse...
+    Aidez-nous à savoir où vous habitez. A l'aide de votre souris, attrapez le marqueur bleu en cliquant dessus, et placez le sur votre logement en maintenant le clic.
+    Vous pouvez zoomer et dézoomer à l'aide du "+" et du "-" situés en haut à droite de la carte, et vous déplacer en maintenant un clic sur le fond de la carte.</div>
+  <div id='map' class='map'></div>
+  </div>
+
+
+
+
+  <div class="yellow"> Une fois que vous avez placé votre logement, veuillez réécrire votre adresse dans les champs suivants, puis cliquez sur "Valider". Vous nous aiderez ainsi à compléter nos données ! </div>
+  <label>Numéro</label> : <input type="text" name="numero" id="nb" style="height:26px;width:50px" />
+  <label>Rue</label> : <input type="text" name="rue" id="st" style="height:26px;width:600px" /> <br />
+  <label>NPA</label> : <input type="text" name="npa" id="np" style="height:26px;width:100px" />
+  <label>Commune</label> : <input type="text" name="commune" id="cm" style="height:26px;width:200px" /> <br />
+  <button onclick='envoyer()' id='bouton' style="height:32px;width:143px">Valider</button>
+</body>
+
+</html>

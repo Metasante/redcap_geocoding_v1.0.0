@@ -28,11 +28,11 @@ class ExternalModule extends AbstractExternalModule {
 
 
 
-        $this->validateAddress('survey',$instrument);
-
-
-        $this->fillCoordinatesEgid('survey',$instrument);
-
+        // $this->validateAddress('survey',$instrument);
+        //
+        //
+        // $this->fillCoordinatesEgid('survey',$instrument);
+        //
 
 
 
@@ -50,9 +50,11 @@ class ExternalModule extends AbstractExternalModule {
     function loadOpenLayers($type, $instrument) {
         // $settings = $this->getFormattedSettings(PROJECT_ID);
 
-        echo '  <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.1.1/build/ol.js"></script>
+        echo '  <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.1.1/build/ol.js" ></script>
                 <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList"></script>
-                <script src="http://api3.geo.admin.ch/loader.js?lang=en&version=4.4.2"  type="text/javascript"></script>';
+                <script src="http://api3.geo.admin.ch/loader.js?lang=en&version=4.4.2" type="text/javascript"></script> ';
+
+
 
     }
 
