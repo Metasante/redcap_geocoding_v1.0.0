@@ -25,12 +25,7 @@ class ExternalModule extends AbstractExternalModule {
     function redcap_survey_complete($project_id, $record = null, $instrument, $event_id, $survey_hash,  $group_id = null, $response_id, $repeat_instance = 1){
 
 
-      $this -> addressValidation('survey', $instrument);
-        // $this->addressValidation('survey',$instrument);
-        //
-        //
-        // $this->fillCoordinatesEgid('survey',$instrument);
-        //
+       $this -> addressValidation('survey', $instrument,$record);
 
 
 
@@ -65,44 +60,40 @@ class ExternalModule extends AbstractExternalModule {
      * @param string $instrument
      *   The instrument name.
      */
-    function addressValidation($type, $instrument) {
+    function addressValidation($type, $instrument,$record) {
 
 
         //Get data from Address form
-        $npa = $_GET['shz_npa'];
-        $address =  $_GET['shz_address'];
-        $address_nr =  $_GET['shz_strname_nr'];
-        $ville=  $_GET['shz_ville'];
+        $npa = $_POST['shz_npa'];
+        $address =  $_POST['shz_address'];
+        $address_nr =  $_POST['shz_strname_nr'];
+        $ville=  $_POST['shz_ville'];
 
-        $is_valid = '';
 
-        // Urls
-        $address_nr_url = "https://lasigvm2.epfl.ch/api/address_nr?search=" . $npa . " " . $address . " " . $address_nr;
-        $geographic_data_url = "https://lasigvm2.epfl.ch/api/complete_address?search=" . $npa . " " . $address . " " . $address_nr;
-        // $address_nr_url = "https://lasigvm2.epfl.ch/api/address_nr?search=1004%20maupas%2075";
-        // $geographic_data_url = "https://lasigvm2.epfl.ch/api/complete_address?search=1004%20maupas%2075";
+        // // Url
+
+        $geographic_data_url = "https://lasigvm2.epfl.ch/api/complete_address/?deinr=" . $address_nr . "&search=" . $npa . " " . $address;
+        // $geographic_data_url = "https://lasigvm2.epfl.ch/api/complete_address/?deinr=75&search=1004%20rue%20du%20maupas";
         //
 
         //Call API
-        $data_nr = file_get_contents($address_nr_url);
+          $geographic_data_array = file_get_contents($geographic_data_url);
+          $geographic_data = json_decode(utf8_encode($geographic_data_array));
+//           // $first_element = var_dump($geographic_data[0]);
+                    // $geographic_data = json_decode($geographic_data{0});
 
-        //Check if address exists and is unique
-        if (count($data_nr) === 1) {
-          $is_valid = 1;
+          // echo print_r(count($geographic_data_array));
+
+          if (count($geographic_data_array)==1){
 
 
-          // $geographic_data = file_get_contents($geographic_data_url);
-          $geographic_data = json_decode(utf8_encode(file_get_contents($geographic_data_url)));
-          // $first_element = var_dump($geographic_data[0]);
-                // $geographic_data = json_decode($geographic_data{0});
-          $egid = $geographic_data[0] -> egid;
-          $gkode = $geographic_data[0] -> gkode;
-          $gkodn = $geographic_data[0] -> gkodn;
-
+            $egid = $geographic_data[0] -> egid;
+            $gkode = $geographic_data[0] -> gkode;
+            $gkodn = $geographic_data[0] -> gkodn;
 
 
           $data_to_save = array (
-            'record_id' => 903,
+            'record_id' => $record,
             'shz_npa' => $npa,
             'shz_ville' => $ville,
             'shz_address' => $address,
@@ -112,11 +103,11 @@ class ExternalModule extends AbstractExternalModule {
             'egid' => $egid,
           );
 
-
-          	$data_json = json_encode(array($data_to_save));
-
-
-
+//
+        $data_json = json_encode(array($data_to_save));
+//
+//
+//
             $data = array(
               'token' => '1B2AA759236038197B38991BB754D930',
               'content' => 'record',
@@ -145,9 +136,7 @@ class ExternalModule extends AbstractExternalModule {
             curl_close($ch);
 
             return $output;
-          // $csv_data = "egid,gkode,gkodn"
-          // .$egid.",".$gkode.",".$gkodn;//.(string)$test_array["Est"].",".(string)$test_array["Nord"];
-          // $response = REDCap::saveData(13, 'json', $geographic_data[0], 'overwrite'); //Enregistrement donnees
+
 
         } else {
 
@@ -158,7 +147,7 @@ class ExternalModule extends AbstractExternalModule {
     'format' => 'json',
     'instrument' => 'adresse_nonexistante',
     'event' => 'event_1_arm_1',
-    'record' => '903',
+    'record' => $record,
     'returnFormat' => 'json'
 );
 $ch = curl_init();
@@ -184,16 +173,12 @@ curl_close($ch);
 
         }
 
-        //
-        // $csv_data = "egid,gkode,gkodn"
-        // .$egid.",".$gkode.",".$gkodn;//.(string)$test_array["Est"].",".(string)$test_array["Nord"];
-        // $response = REDCap::saveData('csv',$csv_data); //Enregistrement donnees
-        // echo $first_element;
+
+
 
         // echo  "<script> console.log( ". file_get_contents($geographic_data_url) ."[0]) </script>";
 
     }
-
 
 
     // Redirects to URL provided using PHP, and if
@@ -211,5 +196,11 @@ curl_close($ch);
           exit;
        }
     }
+
+
+
+
+
+
 
 }
