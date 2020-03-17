@@ -83,7 +83,7 @@ class ExternalModule extends AbstractExternalModule {
 
 
         //Validate address
-          if (count($geographic_data_array)==1){
+          if (count($geographic_data)==1){
 
 
             $egid = $geographic_data[0] -> egid;
@@ -100,6 +100,7 @@ class ExternalModule extends AbstractExternalModule {
             'gkode' => $gkode,
             'gkodn' => $gkodn,
             'egid' => $egid,
+            'addr_is_valid' => 1
           );
 
 
