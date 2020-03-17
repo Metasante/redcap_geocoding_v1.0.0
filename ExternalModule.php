@@ -16,7 +16,7 @@ class ExternalModule extends AbstractExternalModule {
 
     function redcap_survey_page_top($project_id, $record = null, $instrument, $event_id, $group_id = null, $survey_hash, $response_id = null, $repeat_instance = 1) {
         $this->loadOpenLayers('survey', $instrument);
-        // $this -> addressValidation('survey', $instrument);
+        // $this -> addressValidationPriori('survey', $instrument);
 
 
     }
@@ -25,7 +25,7 @@ class ExternalModule extends AbstractExternalModule {
     function redcap_survey_complete($project_id, $record = null, $instrument, $event_id, $survey_hash,  $group_id = null, $response_id, $repeat_instance = 1){
 
 
-       $this -> addressValidation('survey', $instrument,$record);
+       $this -> addressValidation('survey', $instrument, $record);
 
 
 
@@ -41,7 +41,6 @@ class ExternalModule extends AbstractExternalModule {
      *   The instrument name.
      */
     function loadOpenLayers($type, $instrument) {
-        // $settings = $this->getFormattedSettings(PROJECT_ID);
 
         echo '<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.2.1/css/ol.css" type="text/css">
               <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.1.1/build/ol.js" ></script>
@@ -52,6 +51,7 @@ class ExternalModule extends AbstractExternalModule {
     }
 
 
+
     /**
      * Fill with swiss coordinates and egid, and if address not valid send to other instrument
      *
@@ -59,6 +59,8 @@ class ExternalModule extends AbstractExternalModule {
      *   Accepted types: 'data_entry' or 'survey'.
      * @param string $instrument
      *   The instrument name.
+     * @param string $record
+     *  The record name.
      */
     function addressValidation($type, $instrument,$record) {
 
@@ -67,23 +69,20 @@ class ExternalModule extends AbstractExternalModule {
         $npa = $_POST['shz_npa'];
         $address =  $_POST['shz_address'];
         $address_nr =  $_POST['shz_strname_nr'];
-        $ville=  $_POST['shz_ville'];
 
 
-        // // Url
+        //Replace space by %20
+        $address_url = str_replace(' ', '%20', $address);
 
-        $geographic_data_url = "https://lasigvm2.epfl.ch/api/complete_address/?deinr=" . $address_nr . "&search=" . $npa . " " . $address;
-        // $geographic_data_url = "https://lasigvm2.epfl.ch/api/complete_address/?deinr=75&search=1004%20rue%20du%20maupas";
-        //
+        // Url
+        $geographic_data_url = "https://lasigvm2.epfl.ch/api/complete_address/?deinr=" . $address_nr . "&search=" . $npa . "%20" .  $address_url ;
 
         //Call API
           $geographic_data_array = file_get_contents($geographic_data_url);
           $geographic_data = json_decode(utf8_encode($geographic_data_array));
-//           // $first_element = var_dump($geographic_data[0]);
-                    // $geographic_data = json_decode($geographic_data{0});
 
-          // echo print_r(count($geographic_data_array));
 
+        //Validate address
           if (count($geographic_data_array)==1){
 
 
@@ -103,11 +102,9 @@ class ExternalModule extends AbstractExternalModule {
             'egid' => $egid,
           );
 
-//
+
         $data_json = json_encode(array($data_to_save));
-//
-//
-//
+
             $data = array(
               'token' => '1B2AA759236038197B38991BB754D930',
               'content' => 'record',
@@ -164,8 +161,6 @@ curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data, '', '&'));
 $output = curl_exec($ch);
 print $output;
 curl_close($ch);
-
-
 
 
 
