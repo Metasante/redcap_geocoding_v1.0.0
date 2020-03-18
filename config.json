@@ -1,7 +1,7 @@
 {
     "name": "REDCap Geocoding",
     "namespace": "Geocoding\\ExternalModule",
-    "description": "Allow the use of geo libraries (open layers)",
+    "description": "Allow the use of geo libraries (open layers) and geocode swiss addresses",
     "permissions": [
         "redcap_data_entry_form_top",
         "redcap_survey_page_top",
@@ -14,54 +14,7 @@
             "institution": "Ecole Polytéchnique Fédérale de Lausanne (EPFL)"
         }
     ],
-    "project-settings": [
-      {
-          "name": "JS Code",
-          "key": "js",
-          "type": "sub_settings",
-          "repeatable": true,
-          "sub_settings": [
-              {
-                  "name": "Enabled",
-                  "key": "js_enabled",
-                  "type": "checkbox"
-              },
-              {
-                  "name": "Apply to",
-                  "key": "js_type",
-                  "type": "radio",
-                  "required": true,
-                  "choices": [
-                      {
-                          "value": "all",
-                          "name": "All"
-                      },
-                      {
-                          "value": "survey",
-                          "name": "Surveys"
-                      },
-                      {
-                          "value": "data_entry",
-                          "name": "Data Entry Pages"
-                      }
-                  ]
-              },
-              {
-                  "name": "Apply to the following instruments (leave blank to apply to all instruments)",
-                  "key": "js_instruments",
-                  "type": "form-list",
-                  "repeatable": true,
-                  "select2": true
-              },
-              {
-                  "name": "JavaScript Snippet (without &lt;script&gt; tags)",
-                  "key": "js_code",
-                  "required": true,
-                  "type": "textarea"
-              }
-          ]
-      }
-    ],
+
     "compatibility": {
         "php-version-min": "5.4.0",
         "php-version-max": "",

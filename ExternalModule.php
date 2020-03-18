@@ -5,7 +5,7 @@ use ExternalModules\AbstractExternalModule;
 use ExternalModules\ExternalModules;
 
 /**
- * ExternalModule class for Javascript Injector.
+ * ExternalModule class for Geocoding.
  */
 class ExternalModule extends AbstractExternalModule
 {
@@ -28,12 +28,9 @@ class ExternalModule extends AbstractExternalModule
 
 
     /*
-       * Load OpenLayers.
+       * Load OpenLayers library.
        *
-       * @param string $type
-       *   Accepted types: 'data_entry' or 'survey'.
-       * @param string $instrument
-       *   The instrument name.
+
        */
     public function loadOpenLayers()
     {
@@ -48,10 +45,6 @@ class ExternalModule extends AbstractExternalModule
     /**
      * Fill with swiss coordinates and egid, and if address not valid send to other instrument
      *
-     * @param string $type
-     *   Accepted types: 'data_entry' or 'survey'.
-     * @param string $instrument
-     *   The instrument name.
      * @param string $record
      *  The record name.
      */
@@ -153,14 +146,11 @@ class ExternalModule extends AbstractExternalModule
             print $output;
             curl_close($ch);
 
-
+            // Redirect to adresse non-existante
             return redirect($output);
         }
 
 
-
-
-        // echo  "<script> console.log( ". file_get_contents($geographic_data_url) ."[0]) </script>";
     }
 
 
@@ -168,8 +158,9 @@ class ExternalModule extends AbstractExternalModule
 
     public function manualGeocoding($record)
     {
-        $gkode = $_POST['gkode_2'];
-        $gkodn = $_POST['gkodn_2'];
+
+      $gkode = $_POST['gkode_2'];
+      $gkodn = $_POST['gkodn_2'];
 
 
         $data_to_save = array(
@@ -212,6 +203,8 @@ class ExternalModule extends AbstractExternalModule
 
 
         return $output;
+
+
     }
 
 
