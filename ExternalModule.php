@@ -4,6 +4,8 @@ namespace Geocoding\ExternalModule;
 use ExternalModules\AbstractExternalModule;
 use ExternalModules\ExternalModules;
 
+use \REDCap as REDCap;
+
 /**
  * ExternalModule class for Geocoding.
  */
@@ -20,7 +22,7 @@ class ExternalModule extends AbstractExternalModule
     public function redcap_survey_complete($project_id, $record = null, $instrument, $event_id, $survey_hash, $group_id = null, $response_id, $repeat_instance = 1)
     {
         if ($instrument == 'mon_lieu_dhabitation') {
-            $this -> addressValidation($record);
+            $this -> addressValidation($record, $event_id);
         } elseif ($instrument == 'adresse_nonexistante') {
             $this -> manualGeocoding($record);
         }
@@ -48,7 +50,7 @@ class ExternalModule extends AbstractExternalModule
      * @param string $record
      *  The record name.
      */
-    public function addressValidation($record)
+    public function addressValidation($record,$event_id)
     {
 
 
@@ -92,7 +94,7 @@ class ExternalModule extends AbstractExternalModule
             $data_json = json_encode(array($data_to_save));
 
             $data = array(
-              'token' => '1B2AA759236038197B38991BB754D930',
+              'token' => '79DFB8AE750A84A9D535C8F295412736',
               'content' => 'record',
               'format' => 'json',
               'type' => 'flat',
@@ -104,7 +106,7 @@ class ExternalModule extends AbstractExternalModule
             );
 
             $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, 'http://redcap.local/api/');
+            curl_setopt($ch, CURLOPT_URL, 'https://redcap.unisante.ch/api/');
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
             curl_setopt($ch, CURLOPT_VERBOSE, 0);
@@ -120,19 +122,23 @@ class ExternalModule extends AbstractExternalModule
 
             return $output;
         } else {
+
+            $events = REDCap::getEventNames(true, false);
+            $event_name = $events[$event_id];
+
             $data = array(
-    'token' => '1B2AA759236038197B38991BB754D930',
+    'token' => '79DFB8AE750A84A9D535C8F295412736',
     'content' => 'surveyLink',
     'format' => 'json',
     'instrument' => 'adresse_nonexistante',
-    'event' => 'event_1_arm_1',
+    'event' => $event_name,
     'record' => $record,
     'returnFormat' => 'json'
 );
 
 
             $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, 'http://redcap.local/api/');
+            curl_setopt($ch, CURLOPT_URL, 'https://redcap.unisante.ch/api/');
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
             curl_setopt($ch, CURLOPT_VERBOSE, 0);
@@ -149,8 +155,6 @@ class ExternalModule extends AbstractExternalModule
             // Redirect to adresse non-existante
             return redirect($output);
         }
-
-
     }
 
 
@@ -158,9 +162,8 @@ class ExternalModule extends AbstractExternalModule
 
     public function manualGeocoding($record)
     {
-
-      $gkode = $_POST['gkode_2'];
-      $gkodn = $_POST['gkodn_2'];
+        $gkode = $_POST['gkode_2'];
+        $gkodn = $_POST['gkodn_2'];
 
 
         $data_to_save = array(
@@ -174,7 +177,7 @@ class ExternalModule extends AbstractExternalModule
         $data_json = json_encode(array($data_to_save));
 
         $data = array(
-        'token' => '1B2AA759236038197B38991BB754D930',
+        'token' => '79DFB8AE750A84A9D535C8F295412736',
         'content' => 'record',
         'format' => 'json',
         'type' => 'flat',
@@ -186,7 +189,7 @@ class ExternalModule extends AbstractExternalModule
       );
 
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, 'http://redcap.local/api/');
+        curl_setopt($ch, CURLOPT_URL, 'https://redcap.unisante.ch/api/');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_VERBOSE, 0);
@@ -203,8 +206,6 @@ class ExternalModule extends AbstractExternalModule
 
 
         return $output;
-
-
     }
 
 
