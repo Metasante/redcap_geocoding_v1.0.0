@@ -35,11 +35,17 @@ class ExternalModule extends AbstractExternalModule
 
        */
     public function loadOpenLayers()
+
+
     {
-        echo '<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.2.1/css/ol.css" type="text/css">
-              <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.2.1/build/ol.js" ></script>
-              <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList"></script>
-              <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.6.0/proj4-src.js" ></script>';
+
+        $pathOLcss = '../modules/redcap_geocoding_v1.0.0/geoLibraries/v6.2.1-dist/ol.css';
+        $pathOLjs = '../modules/redcap_geocoding_v1.0.0/geoLibraries/v6.2.1-dist/ol.js';
+        $pathProj4 = '../modules/redcap_geocoding_v1.0.0/geoLibraries/proj4-dist/proj4-src.js';
+
+        echo '<link rel="stylesheet" href=' . $pathOLcss . ' type="text/css">
+              <script src=' . $pathOLjs . '></script>
+              <script src=' . $pathProj4 . '></script>';
     }
 
 
