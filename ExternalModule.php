@@ -37,7 +37,7 @@ class ExternalModule extends AbstractExternalModule
     public function loadOpenLayers()
     {
         echo '<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.2.1/css/ol.css" type="text/css">
-              <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.1.1/build/ol.js" ></script>
+              <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.2.1/build/ol.js" ></script>
               <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList"></script>
               <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.6.0/proj4-src.js" ></script>';
     }
@@ -50,7 +50,7 @@ class ExternalModule extends AbstractExternalModule
      * @param string $record
      *  The record name.
      */
-    public function addressValidation($record,$event_id)
+    public function addressValidation($record, $event_id)
     {
 
 
@@ -73,87 +73,32 @@ class ExternalModule extends AbstractExternalModule
 
         //Validate address
         if (count($geographic_data)==1) {
+
+            // Get egid and X, Y coordinates
             $egid = $geographic_data[0] -> egid;
             $gkode = $geographic_data[0] -> gkode;
             $gkodn = $geographic_data[0] -> gkodn;
 
 
+            //Save egid, XY coordinates and validate address
             $data_to_save = array(
-            'record_id' => $record,
-            'shz_npa' => $npa,
-            'shz_ville' => $ville,
-            'shz_address' => $address,
-            'shz_strname_nr' => $address_nr,
-            'gkode' => $gkode,
-            'gkodn' => $gkodn,
-            'egid' => $egid,
-            'addr_is_valid' => 1
-          );
+                              'record_id' => $record,
+                              'gkode' => $gkode,
+                              'gkodn' => $gkodn,
+                              'egid' => $egid,
+                              'addr_is_valid' => 1
+                            );
 
-
+            // Encode to json
             $data_json = json_encode(array($data_to_save));
 
-            $data = array(
-              'token' => '79DFB8AE750A84A9D535C8F295412736',
-              'content' => 'record',
-              'format' => 'json',
-              'type' => 'flat',
-              'overwriteBehavior' => 'normal',
-              'forceAutoNumber' => 'false',
-              'data' => $data_json,
-              'returnContent' => 'count',
-              'returnFormat' => 'json'
-            );
+            //Save data
+            return REDCap::saveData('json', $data_json);
 
-            $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, 'https://redcap.unisante.ch/api/');
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-            curl_setopt($ch, CURLOPT_VERBOSE, 0);
-            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-            curl_setopt($ch, CURLOPT_AUTOREFERER, true);
-            curl_setopt($ch, CURLOPT_MAXREDIRS, 10);
-            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
-            curl_setopt($ch, CURLOPT_FRESH_CONNECT, 1);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data, '', '&'));
-            $output = curl_exec($ch);
-            print $output;
-            curl_close($ch);
-
-            return $output;
         } else {
 
-            $events = REDCap::getEventNames(true, false);
-            $event_name = $events[$event_id];
-
-            $data = array(
-    'token' => '79DFB8AE750A84A9D535C8F295412736',
-    'content' => 'surveyLink',
-    'format' => 'json',
-    'instrument' => 'adresse_nonexistante',
-    'event' => $event_name,
-    'record' => $record,
-    'returnFormat' => 'json'
-);
-
-
-            $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, 'https://redcap.unisante.ch/api/');
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-            curl_setopt($ch, CURLOPT_VERBOSE, 0);
-            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-            curl_setopt($ch, CURLOPT_AUTOREFERER, true);
-            curl_setopt($ch, CURLOPT_MAXREDIRS, 10);
-            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
-            curl_setopt($ch, CURLOPT_FRESH_CONNECT, 1);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data, '', '&'));
-            $output = curl_exec($ch);
-            print $output;
-            curl_close($ch);
-
-            // Redirect to adresse non-existante
-            return redirect($output);
+            // Redirect to survey link of adresse_nonexistante instrument
+            return redirect(REDCap::getSurveyLink($record, 'adresse_nonexistante', $event_id));
         }
     }
 
@@ -162,50 +107,25 @@ class ExternalModule extends AbstractExternalModule
 
     public function manualGeocoding($record)
     {
+
+      //Get XY from map
         $gkode = $_POST['gkode_2'];
         $gkodn = $_POST['gkodn_2'];
 
-
+        //XY coordinates and validate address
         $data_to_save = array(
-    'record_id' => $record,
-    'gkode' => $gkode,
-    'gkodn' => $gkodn,
-    'egid' => null,
-    'addr_is_valid' => 0
-  );
+                        'record_id' => $record,
+                        'gkode' => $gkode,
+                        'gkodn' => $gkodn,
+                        'egid' => null,
+                        'addr_is_valid' => 0
+                      );
 
+        // Encode to json
         $data_json = json_encode(array($data_to_save));
 
-        $data = array(
-        'token' => '79DFB8AE750A84A9D535C8F295412736',
-        'content' => 'record',
-        'format' => 'json',
-        'type' => 'flat',
-        'overwriteBehavior' => 'normal',
-        'forceAutoNumber' => 'false',
-        'data' => $data_json,
-        'returnContent' => 'count',
-        'returnFormat' => 'json'
-      );
-
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, 'https://redcap.unisante.ch/api/');
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_VERBOSE, 0);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-        curl_setopt($ch, CURLOPT_AUTOREFERER, true);
-        curl_setopt($ch, CURLOPT_MAXREDIRS, 10);
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
-        curl_setopt($ch, CURLOPT_FRESH_CONNECT, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data, '', '&'));
-        $output = curl_exec($ch);
-        print $output;
-        curl_close($ch);
-
-
-
-        return $output;
+        // Save data
+        return REDCap::saveData('json', $data_json);
     }
 
 
@@ -214,7 +134,7 @@ class ExternalModule extends AbstractExternalModule
 
 
 
-    // Redirects to URL provided using PHP, and if
+    // Redirects to URL provided
     public function redirect($url)
     {
         // If contents already output, use javascript to redirect instead
