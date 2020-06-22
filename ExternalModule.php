@@ -11,8 +11,12 @@ use \REDCap as REDCap;
  */
 class ExternalModule extends AbstractExternalModule
 {
+
+  // get_class($this)->exitAfterHook();
+
     public function redcap_survey_page_top($project_id, $record = null, $instrument, $event_id, $group_id = null, $survey_hash, $response_id = null, $repeat_instance = 1)
     {
+
         if ($instrument == 'adresse_nonexistante') {
             $this->loadOpenLayers();
         }
@@ -21,11 +25,22 @@ class ExternalModule extends AbstractExternalModule
 
     public function redcap_survey_complete($project_id, $record = null, $instrument, $event_id, $survey_hash, $group_id = null, $response_id, $repeat_instance = 1)
     {
+
+
         if ($instrument == 'mon_lieu_dhabitation') {
+
             $this -> addressValidation($record, $event_id);
+
+
+
+
+
         } elseif ($instrument == 'adresse_nonexistante') {
-            $this -> manualGeocoding($record);
+            $this -> manualGeocoding($record, $event_id);
+
         }
+
+
     }
 
 
@@ -35,10 +50,7 @@ class ExternalModule extends AbstractExternalModule
 
        */
     public function loadOpenLayers()
-
-
     {
-
         $pathOLcss = '../modules/redcap_geocoding_v1.0.0/geoLibraries/v6.2.1-dist/ol.css';
         $pathOLjs = '../modules/redcap_geocoding_v1.0.0/geoLibraries/v6.2.1-dist/ol.js';
         $pathProj4 = '../modules/redcap_geocoding_v1.0.0/geoLibraries/proj4-dist/proj4-src.js';
@@ -58,7 +70,6 @@ class ExternalModule extends AbstractExternalModule
      */
     public function addressValidation($record, $event_id)
     {
-
 
         //Get data from Address form
         $npa = $_POST['shz_npa'];
@@ -89,6 +100,7 @@ class ExternalModule extends AbstractExternalModule
             //Save egid, XY coordinates and validate address
             $data_to_save = array(
                               'record_id' => $record,
+                              'redcap_event_name' => REDCap::getEventNames(true, true, $event_id),
                               'gkode' => $gkode,
                               'gkodn' => $gkodn,
                               'egid' => $egid,
@@ -100,18 +112,34 @@ class ExternalModule extends AbstractExternalModule
 
             //Save data
             return REDCap::saveData('json', $data_json);
-
         } else {
 
             // Redirect to survey link of adresse_nonexistante instrument
+            //Save egid, XY coordinates and validate address
+            $data_to_save = array(
+                              'record_id' => $record,
+                              'redcap_event_name' => REDCap::getEventNames(true, true, $event_id),
+                              'addr_is_valid' => 0
+                            );
+
+            // Encode to json
+            $data_json = json_encode(array($data_to_save));
+
+            //Save data
+            REDCap::saveData('json', $data_json);
+
             return redirect(REDCap::getSurveyLink($record, 'adresse_nonexistante', $event_id));
+
+
+
         }
+
     }
 
 
 
 
-    public function manualGeocoding($record)
+    public function manualGeocoding($record, $event_id)
     {
 
       //Get XY from map
@@ -121,6 +149,7 @@ class ExternalModule extends AbstractExternalModule
         //XY coordinates and validate address
         $data_to_save = array(
                         'record_id' => $record,
+                        'redcap_event_name' => REDCap::getEventNames(true, true, $event_id),
                         'gkode' => $gkode,
                         'gkodn' => $gkodn,
                         'egid' => null,
@@ -132,6 +161,8 @@ class ExternalModule extends AbstractExternalModule
 
         // Save data
         return REDCap::saveData('json', $data_json);
+
+
     }
 
 
@@ -139,18 +170,24 @@ class ExternalModule extends AbstractExternalModule
 
 
 
+    function redirect($url)
+  {
+     // If contents already output, use javascript to redirect instead
+     if (headers_sent())
+     {
+       // $this -> exitAfterHook();
+        exit("<script type=\"text/javascript\">window.location.href=\"$url\";</script>");
 
-    // Redirects to URL provided
-    public function redirect($url)
-    {
-        // If contents already output, use javascript to redirect instead
-        if (headers_sent()) {
-            exit("<script type=\"text/javascript\">window.location.href=\"$url\";</script>");
-        }
-        // Redirect using PHP
-        else {
-            header("Location: $url");
-            exit;
-        }
-    }
+     }
+     // Redirect using PHP
+     else
+     {
+        // $this -> exitAfterHook();
+        header("Location: $url");
+
+     }
+  }
+
+
+
 }
