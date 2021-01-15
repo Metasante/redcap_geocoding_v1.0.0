@@ -21,7 +21,7 @@ class ExternalModule extends AbstractExternalModule
 
     public function redcap_survey_complete($project_id, $record = null, $instrument, $event_id, $survey_hash, $group_id = null, $response_id, $repeat_instance = 1)
     {
-        if ($instrument == 'mon_lieu_dhabitation') {
+        if ($instrument == 'mon_adresse') {
             $this -> addressValidation($record, $event_id);
         } elseif ($instrument == 'adresse_nonexistante') {
             $this -> manualGeocoding($record, $event_id);
@@ -116,7 +116,8 @@ class ExternalModule extends AbstractExternalModule
                               'record_id' => $record,
                               'redcap_event_name' => REDCap::getEventNames(true, true, $event_id),
                               'addr_is_valid' => 0,
-                              'bbox' => "[" . $city_bbox . "]"
+                              'bbox' => "[" . $city_bbox . "]",
+                              'mon_adresse_complete' => 1
                             );
 
             // Encode to json
@@ -148,7 +149,8 @@ class ExternalModule extends AbstractExternalModule
                         'gkode' => $gkode,
                         'gkodn' => $gkodn,
                         'egid' => null,
-                        'addr_is_valid' => 0
+                        'addr_is_valid' => 0,
+                        'mon_adresse_complete' => 2
                       );
 
         // Encode to json
