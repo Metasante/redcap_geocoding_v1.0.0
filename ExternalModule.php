@@ -81,8 +81,13 @@ class ExternalModule extends AbstractExternalModule
         $city_bbox = str_replace(" ", ",", substr($city_results[0] -> attrs -> geom_st_box2d, 4, -1));
 
 
+        //Check if user entered address number
+        $is_there_any_number = preg_match('~[0-9]+~', substr($address,-3));
+
+
         //Validate address
-        if (count($geographic_results)==1) {
+        if (count($geographic_results) > 0 && $is_there_any_number) {
+
 
 
 
@@ -117,7 +122,7 @@ class ExternalModule extends AbstractExternalModule
                               'redcap_event_name' => REDCap::getEventNames(true, true, $event_id),
                               'addr_is_valid' => 0,
                               'bbox' => "[" . $city_bbox . "]",
-                              'mon_adresse_complete' => 1
+                              'mon_adresse_complete' => 0
                             );
 
             // Encode to json
