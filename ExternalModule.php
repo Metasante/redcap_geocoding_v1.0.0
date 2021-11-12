@@ -132,8 +132,8 @@ class ExternalModule extends AbstractExternalModule
             //redirect(REDCap::getSurveyLink($record, 'adresse_nonexistante', $event_id));
             REDCap::saveData('json', $data_json);
 
-
-            return redirect(REDCap::getSurveyLink($record, 'adresse_nonexistante', $event_id));
+            return $this->redirect(REDCap::getSurveyLink($record, 'adresse_nonexistante', $event_id));
+            //return redirect(REDCap::getSurveyLink($record, 'adresse_nonexistante', $event_id));
         }
     }
 
@@ -177,7 +177,8 @@ class ExternalModule extends AbstractExternalModule
         // Redirect using PHP
         else {
             header("Location: $url");
-            exit;
+            $this->exitAfterHook();
+            //exit;
         }
     }
 }
