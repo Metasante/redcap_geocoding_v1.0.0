@@ -1,7 +1,7 @@
 {
     "name": "REDCap Geocoding",
     "namespace": "Geocoding\\ExternalModule",
-    "description": "Allow the use of geo libraries (open layers) and geocode swiss addresses",
+    "description": "NEW Allow the use of geo libraries (open layers) and geocode swiss addresses",
     "permissions": [
         "redcap_data_entry_form_top",
         "redcap_survey_page_top",
